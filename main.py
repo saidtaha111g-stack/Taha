@@ -22,5 +22,5 @@ def send_welcome(message):
 @bot.message_handler(content_types=['document'])
 def handle_docs(message):
     try:
-        file_name = message.document.
+        file_name = message.document.file_name
         
