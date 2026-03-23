@@ -7,8 +7,8 @@ from pdf2image import convert_from_path
 from PIL import Image
 
 # 1. API ve Token Ayarları
-TELEGRAM_TOKEN = "SENIN_TELEGRAM_BOT_TOKENIN_BURAYA"
-GEMINI_API_KEY = "SENIN_GEMINI_API_ANAHTARIN_BURAYA"
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 genai.configure(api_key=GEMINI_API_KEY)
