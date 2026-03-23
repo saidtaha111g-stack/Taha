@@ -55,5 +55,5 @@ def handle_docs(message):
         # EĞER DOSYA PDF İSE:
         elif file_name.endswith('.pdf'):
             bot.reply_to(message, "PDF alındı kanka! Belgeyi inceliyorum...")
-            gecici_dosya = "gecici_belge.pdf
+            gecici_dosya = "gecici_belge.pdf"
             
