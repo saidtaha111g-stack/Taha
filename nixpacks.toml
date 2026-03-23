@@ -1,4 +1,4 @@
 [phases.setup]
 aptPkgs = ["poppler-utils"]
 [start]
-cmd = "python telebot.py"
+cmd = "python main.py"
