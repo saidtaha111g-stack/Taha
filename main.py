@@ -12,12 +12,25 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 genai.configure(api_key=GEMINI_API_KEY)
 
-# İŞTE GÜNCELLEDİĞİMİZ SATIR BURASI:
-model = genai.GenerativeModel('gemini-pro')
+# OTOMATİK MODEL SEÇİCİ (Google'ın sunucusundan çalışan güncel modeli kendi bulur)
+calisan_model = None
+try:
+    for m in genai.list_models():
+        if 'generateContent' in m.supported_generation_methods:
+            calisan_model = m.name
+            if 'flash' in calisan_model.lower() or 'pro' in calisan_model.lower():
+                break
+except Exception as e:
+    calisan_model = 'gemini-1.5-flash' # Ne olursa olsun yedekte dursun
+
+if calisan_model is None:
+    calisan_model = 'gemini-1.5-flash'
+
+model = genai.GenerativeModel(calisan_model)
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, "Selam Haşmetli Taha! Sınav notu çıkarmam için bana PDF veya PPTX (slayt) gönder.")
+    bot.reply_to(message, f"Selam Haşmetli Taha! Sınav notu çıkarmam için bana PDF veya PPTX (slayt) gönder. (Botun bağlandığı yapay zeka: {calisan_model})")
 
 @bot.message_handler(content_types=['document'])
 def handle_docs(message):
@@ -83,4 +96,3 @@ def handle_docs(message):
         bot.reply_to(message, f"Bir hata oluştu kanka, şuna bir bak: {e}")
 
 bot.polling(none_stop=True)
-            
