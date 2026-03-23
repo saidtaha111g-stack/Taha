@@ -6,7 +6,7 @@ from pptx import Presentation
 from pdf2image import convert_from_path
 from PIL import Image
 
-# 1. API ve Token Ayarları
+# Şifreleri doğrudan koda yazmıyoruz, Railway Variables bölümünden çekiyoruz
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 
@@ -19,7 +19,7 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 # Bota /start yazıldığında verilecek cevap
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.reply_to(message, "Selam Haşmetli Taha! Ben senin kişisel tıp, acil yardım ve KPSS asistanınım. Sınav notu çıkarmam için bana PDF veya PPTX (slayt) gönder.")
+    bot.reply_to(message, "Selam Haşmetli Taha! Haziran'daki mezuniyetine ve KPSS hedeflerine giden yolda kişisel tıp ve acil yardım asistanın emrinde. Sınav notu çıkarmam için bana PDF veya PPTX (slayt) gönder.")
 
 # PDF veya PPTX geldiğinde çalışacak ana kod
 @bot.message_handler(content_types=['document'])
@@ -30,7 +30,7 @@ def handle_docs(message):
         downloaded_file = bot.download_file(file_info.file_path)
         
         # Yapay Zekaya Verilen Kalıcı Uzmanlık Talimatı
-        saglik_talimati = "Sen uzman bir paramedik eğitmeni ve KPSS tıbbi bilimler uzmanısın. Gönderilen bu içerikten anatomi, fizyoloji ve acil bakım gibi konularda sınavda çıkabilecek en kritik noktaları, terimleri ve hap bilgileri maddeler halinde çıkar."
+        saglik_talimati = "Sen uzman bir paramedik eğitmeni ve KPSS tıbbi bilimler uzmanısın. Gönderilen bu içerikten anatomi, fizyoloji ve acil bakım gibi konularda sınavda çıkabilecek en kritik noktaları, terimleri ve hap bilgileri maddeler halinde çıkar. Karşındaki öğrencinin hedefi atanmak için 95 üstü puan almak, özetlerini bu ciddiyetle hazırla!"
 
         # EĞER DOSYA PPTX (SLAYT) İSE:
         if file_name.endswith('.pptx'):
@@ -56,4 +56,18 @@ def handle_docs(message):
         elif file_name.endswith('.pdf'):
             bot.reply_to(message, "PDF alındı kanka! Belgeyi inceliyorum...")
             gecici_dosya = "gecici_belge.pdf"
+            with open(gecici_dosya, 'wb') as new_file:
+                new_file.write(downloaded_file)
             
+            # 1inci Aşama: Normal metin olarak okumayı dene
+            metin = ""
+            with open(gecici_dosya, "rb") as pdf_file:
+                reader = PyPDF2.PdfReader(pdf_file)
+                for page in reader.pages:
+                    extracted = page.extract_text()
+                    if extracted:
+                        metin += extracted + "\n"
+            
+            # 2nci Aşama: Eğer okunan metin çok kısaysa (Taranmış belge veya fotoğrafsa)
+            if len(metin.strip()) < 50:
+                bot.reply_to(message, "Bu PDF resim formatında kanka, görüntü işleme (OCR) ile okuyup not çıkarıyorum...")
