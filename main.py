@@ -13,7 +13,7 @@ bot = telebot.TeleBot(TELEGRAM_TOKEN)
 genai.configure(api_key=GEMINI_API_KEY)
 
 # İŞTE GÜNCELLEDİĞİMİZ SATIR BURASI:
-model = genai.GenerativeModel('gemini-1.5-flash-latest')
+model = genai.GenerativeModel('gemini-pro')
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
