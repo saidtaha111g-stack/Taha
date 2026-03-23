@@ -1,0 +1,7 @@
+pyTelegramBotAPI
+google-generativeai
+PyPDF2
+python-pptx
+pdf2image
+Pillow
+
